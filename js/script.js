@@ -41,6 +41,8 @@ let selectedKeys = (selectedKey) => {
                 decimal(innerValue)
                 break;
             case 'eval':
+
+                // replace with evaluate function with calculator
                 alert(innerValue);
                 break;
             case  'clear':
@@ -89,3 +91,9 @@ let operator = (innerValue) => {
     }
 
 }
+
+// evaluate function will carry the calculator
+    // create a variable (result) with that calculate firstOperand + operator + secondOperand
+    // displayValue is equal to result variable
+    // call on the updateValue() function
+    // update firstOperand to result variable and clear (secondOperand = null, operator = null)
