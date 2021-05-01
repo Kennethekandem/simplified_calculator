@@ -13,12 +13,22 @@ const calculator = {
 
 //get innerValue == null and target.className = null
 
-let updateValue = () => {
+let updateValue = (innerValue = null, target = null) => {
+
 
     // check if firstOperand is not empty
-        // get innerValue, parseFloat it ( innerValue ) and update in secondOperand
+        if(calculator.firstOperand !== null) {
+            // get innerValue, parseFloat it ( innerValue ) and update in secondOperand
+            calculator.waitingForSecondOperand = parseFloat(innerValue);
+        }
 
     // update display and displayValue to show displayValue + innerValue
+    let displayValue = calculator.displayValue;
+
+    if(innerValue !== null) {
+        calculator.displayValue = displayValue + innerValue;
+    }
+
     display.innerHTML = calculator.displayValue.charAt(0) === '0' ? calculator.displayValue.substring(1) : calculator.displayValue;
 }
 updateValue();
@@ -30,9 +40,6 @@ let selectedKeys = (selectedKey) => {
 
         let innerValue = target.innerHTML;
 
-        // Move this to updateValue(), then delete from here
-        let displayValue = calculator.displayValue;
-
         switch (target.className) {
             case 'operator':
                 operator(innerValue);
@@ -43,19 +50,15 @@ let selectedKeys = (selectedKey) => {
             case 'eval':
 
                 // replace with evaluate function with calculator
-                alert(innerValue);
+                eval(calculator);
                 break;
             case  'clear':
                 clear(calculator)
                 break
             default:
 
-                // move this logic to updateValue()
-                calculator.displayValue = displayValue + innerValue;
-                // end logic
-
                 //add innerValue to updateValue()
-                updateValue();
+                updateValue(innerValue);
         }
     })
 }
@@ -66,6 +69,7 @@ let clear = (calculator) => {
     calculator.displayValue = '0';
     calculator.operator = null;
     calculator.firstOperand = null;
+    calculator.waitingForSecondOperand = false;
     updateValue();
 }
 
@@ -93,7 +97,30 @@ let operator = (innerValue) => {
 }
 
 // evaluate function will carry the calculator
+
+let eval = (calculator) => {
+
+    //covert operator to int
+    let operator = calculator.operator
+
+    let math_it_up = {
+        '+': function (x, y) { return x + y },
+        '-': function (x, y) { return x - y },
+        '*': function (x, y) { return x * y },
+        '/': function (x, y) { return x / y },
+    };
+
     // create a variable (result) with that calculate firstOperand + operator + secondOperand
+    let result = math_it_up[operator](calculator.firstOperand, calculator.waitingForSecondOperand);
+
     // displayValue is equal to result variable
+    calculator.displayValue = String(result);
+    calculator.firstOperand = null
+
     // call on the updateValue() function
+    updateValue();
     // update firstOperand to result variable and clear (secondOperand = null, operator = null)
+    calculator.firstOperand = parseInt(result);
+    calculator.waitingForSecondOperand = false;
+    calculator.operator = null;
+}
